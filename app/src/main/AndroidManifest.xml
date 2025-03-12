@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -13,17 +14,22 @@
         android:theme="@style/Theme.StonksViewer"
         tools:targetApi="31">
 
-        <!-- LoginActivity: Evita reinicio en rotación y ajusta el teclado -->
+        <!-- HomeActivity (Nueva Pantalla Principal) -->
         <activity
-            android:name=".ui.LoginActivity"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".ui.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- LoginActivity (Ahora solo accesible desde Home) -->
+        <activity
+            android:name=".ui.LoginActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"/>
 
         <!-- RegisterActivity: Evita reinicio en rotación y ajusta el teclado -->
         <activity
@@ -32,11 +38,5 @@
             android:windowSoftInputMode="adjustResize"
             android:exported="true"/>
 
-        <!-- HomeActivity (Pantalla Principal) -->
-        <activity
-            android:name=".ui.HomeActivity"
-            android:exported="true"/>
-
     </application>
-
 </manifest>

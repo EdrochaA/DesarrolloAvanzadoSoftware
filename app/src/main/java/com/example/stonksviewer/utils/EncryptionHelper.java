@@ -24,4 +24,10 @@ public class EncryptionHelper {
             return null;
         }
     }
+
+    // Método para verificar si la contraseña ingresada coincide con la almacenada
+    public static boolean checkPassword(String plainPassword, String hashedPassword) {
+        String hashedInput = hashPassword(plainPassword); // Hashear la contraseña ingresada
+        return hashedInput != null && hashedInput.equals(hashedPassword);
+    }
 }

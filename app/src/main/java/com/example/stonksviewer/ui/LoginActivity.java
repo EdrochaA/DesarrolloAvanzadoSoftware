@@ -1,6 +1,7 @@
 package com.example.stonksviewer.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.inputmethod.EditorInfo;
@@ -61,27 +62,33 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        String username = etUsername.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
+        String username = etUsername.getText().toString();
+        String password = etPassword.getText().toString();
 
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+        User user = userDao.getUser(username);
+
+        if (user == null) {
+            Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Buscar usuario en la base de datos
-        User user = userDao.getUser(username);
+        if (EncryptionHelper.checkPassword(password, user.getPassword())) {
+            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isLoggedIn", true);
+            editor.putString("username", username);
+            editor.apply();
 
-        // Comprobar si la contraseña ingresada es correcta
-        if (user != null && user.password.equals(EncryptionHelper.hashPassword(password))) {
-            Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, HomeActivity.class);
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.putExtra("username", username);
             startActivity(intent);
-            finish(); // Cierra LoginActivity
+            finish();
         } else {
-            Toast.makeText(this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     private void setupAutoScroll() {
         etUsername.setOnFocusChangeListener((v, hasFocus) -> {
