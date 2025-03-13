@@ -17,25 +17,25 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:padding="16dp"
-            android:layout_marginTop="24dp"
+            android:background="@color/light_gray"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Botón de Perfil (Abre el Drawer) -->
+            <!-- Botón de Perfil -->
             <ImageView
                 android:id="@+id/btnProfile"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_profile"
-                android:padding="8dp"
+                android:contentDescription="Perfil"
                 android:onClick="openDrawer"
-                android:contentDescription="Perfil de usuario"
+                android:padding="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <!-- Nombre de Usuario (Texto en negro) -->
+            <!-- Nombre de Usuario -->
             <TextView
                 android:id="@+id/usernameText"
                 android:layout_width="wrap_content"
@@ -61,13 +61,46 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Contenedor Principal -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <!-- Imagen del Logo Stonks -->
+        <ImageView
+            android:id="@+id/ivStonksLogo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/stonks"
+            android:contentDescription="Logo de StonksViewer"
             app:layout_constraintTop_toBottomOf="@id/topBar"
-            app:layout_constraintBottom_toTopOf="@id/bottomNavigation" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp"/>
+
+        <!-- Título STONKSVIEWER -->
+        <TextView
+            android:id="@+id/tvAppTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STONKSVIEWER"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/ivStonksLogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Texto "Top criptomonedas de hoy" -->
+        <TextView
+            android:id="@+id/tvTopCryptos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top criptomonedas de hoy"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/tvAppTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"/>
 
         <!-- Barra Inferior -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -76,21 +109,17 @@
             android:layout_height="72dp"
             android:background="@color/white"
             app:itemIconSize="32dp"
-            app:itemTextAppearanceActive="@style/BottomNavTextStyle"
-            app:itemTextAppearanceInactive="@style/BottomNavTextStyle"
-            app:itemIconTint="@color/bottom_nav_icon"
-            app:itemTextColor="@color/bottom_nav_text"
             app:menu="@menu/bottom_nav_menu"
-            app:labelVisibilityMode="labeled"
+            app:labelVisibilityMode="unlabeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Navigation Drawer -->
+    <!-- Menú de Navegación -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
-        android:layout_width="280dp"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu"/>

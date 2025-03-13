@@ -3,6 +3,7 @@ package com.example.stonksviewer.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ public class HomeActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private SharedPreferences prefs;
     private TextView usernameText;
+    private MenuItem sessionItem, profileItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +35,11 @@ public class HomeActivity extends AppCompatActivity {
         usernameText = findViewById(R.id.usernameText);
         prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
 
-        // Obtener nombre de usuario desde Intent o SharedPreferences
-        String username = getIntent().getStringExtra("username");
-        if (username == null || username.isEmpty()) {
-            username = prefs.getString("username", "");
-        }
+        Menu menu = navigationView.getMenu();
+        sessionItem = menu.findItem(R.id.nav_session_action);
+        profileItem = menu.findItem(R.id.nav_profile);
 
-        // Mostrar el nombre de usuario si hay sesión activa
-        boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
-        if (isLoggedIn && !username.isEmpty()) {
-            usernameText.setText(username);
-            usernameText.setVisibility(View.VISIBLE);
-        } else {
-            usernameText.setVisibility(View.GONE);
-        }
-
-        updateDrawerMenu();
+        updateUI();
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -64,45 +55,67 @@ public class HomeActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        // Configurar la barra de navegación inferior
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.navigation_graphs) {
+                    Intent intent = new Intent(HomeActivity.this, MarketActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
 
-    public void openDrawer(View view) {
-        if (drawerLayout != null) {
-            drawerLayout.openDrawer(GravityCompat.START);
-        }
-    }
-
-    private void updateDrawerMenu() {
+    private void updateUI() {
         boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
-        MenuItem sessionItem = navigationView.getMenu().findItem(R.id.nav_session_action);
-        MenuItem profileItem = navigationView.getMenu().findItem(R.id.nav_profile);
+        String username = prefs.getString("username", "");
 
-        if (isLoggedIn) {
+        if (isLoggedIn && !username.isEmpty()) {
+            usernameText.setText(username);
+            usernameText.setVisibility(View.VISIBLE);
+            profileItem.setVisible(true);
             sessionItem.setTitle("Cerrar Sesión");
             sessionItem.setIcon(R.drawable.ic_logout);
-            profileItem.setVisible(true);
         } else {
+            usernameText.setVisibility(View.GONE);
+            profileItem.setVisible(false);
             sessionItem.setTitle("Iniciar Sesión");
             sessionItem.setIcon(R.drawable.ic_login);
-            profileItem.setVisible(false);
         }
     }
 
     private void handleSessionAction() {
         boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
         SharedPreferences.Editor editor = prefs.edit();
+
         if (isLoggedIn) {
-            editor.putBoolean("isLoggedIn", false);
-            editor.putString("username", "");
+            // Cerrar sesión correctamente
+            editor.clear();
             editor.apply();
 
-            // Reiniciar HomeActivity para aplicar cambios
+            // Reiniciar la actividad para actualizar UI
             Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         } else {
             startActivity(new Intent(this, LoginActivity.class));
         }
+    }
+
+    public void openDrawer(View view) {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
     }
 }
