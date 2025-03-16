@@ -7,24 +7,24 @@ import androidx.room.RoomDatabase;
 import com.example.stonksviewer.data.dao.UserDao;
 import com.example.stonksviewer.model.User;
 
-@Database(entities = {User.class}, version = 1)
+@Database(entities = {User.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
-    private static volatile AppDatabase INSTANCE;
+    private static volatile AppDatabase instance;
 
     public abstract UserDao userDao();
 
-    public static AppDatabase getInstance(Context context) {
-        if (INSTANCE == null) {
+    public static AppDatabase getInstance(final Context context) {
+        if (instance == null) {
             synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "stonksviewer_db")
+                if (instance == null) {
+                    instance = Room.databaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class, "stonks_database")
                             .fallbackToDestructiveMigration()
-                            .allowMainThreadQueries() // Solo para pruebas, en producción usar AsyncTask o LiveData
+                            .allowMainThreadQueries()
                             .build();
                 }
             }
         }
-        return INSTANCE;
+        return instance;
     }
 }

@@ -1,29 +1,30 @@
 package com.example.stonksviewer.model;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "users")
 public class User {
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    private int id;
+    private String username;
+    private String password;
+    private String phone;
+    private String email;
 
-    @ColumnInfo(name = "username")
-    public String username;
-
-    @ColumnInfo(name = "password")
-    public String password;
-
-    public User(String username, String password) {
+    public User(String username, String password, String phone, String email) {
         this.username = username;
         this.password = password;
-    }
-    public String getUsername() {
-        return username;
+        this.phone = phone;
+        this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }

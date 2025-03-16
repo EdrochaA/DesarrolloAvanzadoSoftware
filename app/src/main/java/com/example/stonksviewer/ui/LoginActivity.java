@@ -10,10 +10,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 
 import com.example.stonksviewer.R;
+
 import com.example.stonksviewer.data.database.AppDatabase;
 import com.example.stonksviewer.data.dao.UserDao;
 import com.example.stonksviewer.model.User;
@@ -68,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         User user = userDao.getUser(username);
 
         if (user == null) {
-            Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+            showErrorDialog("Usuario no encontrado", "El usuario ingresado no existe.");
             return;
         }
 
@@ -84,8 +86,19 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+            showErrorDialog("Contraseña incorrecta", "La contraseña ingresada es incorrecta.");
         }
+    }
+
+    /**
+     * Método para mostrar un diálogo de error
+     */
+    private void showErrorDialog(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Aceptar", null)
+                .show();
     }
 
 

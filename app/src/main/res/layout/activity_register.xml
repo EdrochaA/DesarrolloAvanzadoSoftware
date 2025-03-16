@@ -85,8 +85,45 @@
                     android:enabled="true"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Campo Teléfono -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilRegisterPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Teléfono"
+                android:layout_marginTop="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRegisterPhone"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:enabled="true"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Campo Correo Electrónico -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilRegisterEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Correo Electrónico"
+                android:layout_marginTop="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etRegisterEmail"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:enabled="true"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Botón de Registro -->
             <Button
+                style="@style/PrimaryButton"
                 android:id="@+id/btnRegister"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -1,111 +1,110 @@
 package com.example.stonksviewer.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.core.widget.NestedScrollView;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.example.stonksviewer.R;
-import com.example.stonksviewer.data.database.AppDatabase;
 import com.example.stonksviewer.data.dao.UserDao;
+import com.example.stonksviewer.data.database.AppDatabase;
 import com.example.stonksviewer.model.User;
 import com.example.stonksviewer.utils.EncryptionHelper;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText etUsername, etPassword, etConfirmPassword;
+
+    private EditText etUsername, etPassword, etConfirmPassword, etPhone, etEmail;
     private Button btnRegister;
-    private TextView tvGoToLogin;
+    private TextView btnGoToLogin;
     private UserDao userDao;
-    private NestedScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Referencias a las vistas
-        scrollView = findViewById(R.id.scrollView);
         etUsername = findViewById(R.id.etRegisterUsername);
         etPassword = findViewById(R.id.etRegisterPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
+        etPhone = findViewById(R.id.etRegisterPhone);
+        etEmail = findViewById(R.id.etRegisterEmail);
         btnRegister = findViewById(R.id.btnRegister);
-        tvGoToLogin = findViewById(R.id.tvGoToLogin);
+        btnGoToLogin = findViewById(R.id.tvGoToLogin);
 
-        // Desactivar modo de pantalla completa en teclado
-        etUsername.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-        etPassword.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-        etConfirmPassword.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        userDao = AppDatabase.getInstance(getApplicationContext()).userDao();
 
-        // Obtener instancia de la base de datos
-        AppDatabase db = AppDatabase.getInstance(this);
-        userDao = db.userDao();
+        btnRegister.setOnClickListener(view -> registerUser());
 
-        // Evento para ir a Login
-        tvGoToLogin.setOnClickListener(v -> finish());
-
-        // Evento para registrar usuario
-        btnRegister.setOnClickListener(v -> registerUser());
-
-        // Hacer scroll automático cuando el usuario toca un campo de texto
-        setupAutoScroll();
+        btnGoToLogin.setOnClickListener(view -> {
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
+        });
     }
 
     private void registerUser() {
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
+        String phone = etPhone.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
 
-        // Validaciones
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+        if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            showErrorDialog("Campos vacíos", "Todos los campos son obligatorios.");
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            showErrorDialog("Error en la contraseña", "Las contraseñas no coinciden.");
             return;
         }
 
-        // Verificar si el usuario ya existe
-        if (userDao.getUser(username) != null) {
-            Toast.makeText(this, "Este usuario ya está registrado. Prueba otro nombre", Toast.LENGTH_SHORT).show();
+        if (userDao.getUserByUsername(username) != null) {
+            showErrorDialog("Usuario en uso", "Este usuario ya está registrado.");
             return;
         }
 
-        // Encriptar la contraseña antes de guardarla
         String hashedPassword = EncryptionHelper.hashPassword(password);
-
-        // Guardar usuario en la base de datos
-        User newUser = new User(username, hashedPassword);
+        User newUser = new User(username, hashedPassword, phone, email);
         userDao.insertUser(newUser);
 
-        Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+        showSuccessNotification("Registro exitoso", "¡Bienvenido a StonksViewer!");
+
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        startActivity(intent);
         finish();
     }
 
-    private void setupAutoScroll() {
-        etUsername.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                scrollView.post(() -> scrollView.smoothScrollTo(0, etUsername.getTop()));
-            }
-        });
+    /**
+     * Método para mostrar un diálogo de error.
+     */
+    private void showErrorDialog(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Aceptar", null)
+                .show();
+    }
 
-        etPassword.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                scrollView.post(() -> scrollView.smoothScrollTo(0, etPassword.getTop()));
-            }
-        });
+    /**
+     * Método para mostrar una notificación local tras un registro exitoso.
+     */
+    private void showSuccessNotification(String title, String message) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channel_id")
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
 
-        etConfirmPassword.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                scrollView.post(() -> scrollView.smoothScrollTo(0, etConfirmPassword.getTop()));
-            }
-        });
+        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+        manager.notify(1, builder.build());
     }
 }
