@@ -52,8 +52,6 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.ViewHolder
         int imageResId = context.getResources().getIdentifier(crypto.getImageName(), "drawable", context.getPackageName());
         holder.ivCryptoIcon.setImageResource(imageResId);
 
-        // Estrella favorita (futura implementación)
-        holder.ivFavorite.setImageResource(R.drawable.ic_estrella);
     }
 
     @Override
@@ -62,12 +60,11 @@ public class CryptoAdapter extends RecyclerView.Adapter<CryptoAdapter.ViewHolder
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivFavorite, ivCryptoIcon;
+        ImageView ivCryptoIcon;
         TextView tvCryptoName, tvCryptoPrice, tvCryptoChange;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivFavorite = itemView.findViewById(R.id.ivFavorite);
             ivCryptoIcon = itemView.findViewById(R.id.ivCryptoIcon);
             tvCryptoName = itemView.findViewById(R.id.tvCryptoName);
             tvCryptoPrice = itemView.findViewById(R.id.tvCryptoPrice);
